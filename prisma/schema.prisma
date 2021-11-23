@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String   @db.VarChar(255)
+  kriteria  Kriteria[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Kriteria {
+  id          Int      @id @default(autoincrement())
+  CorB        String   @db.VarChar(255)
+  kepentingan Int      @db.Integer
+  c1          Int      @db.Integer
+  c2          Int      @db.Integer
+  c3          Int      @db.Integer
+  c4          Int      @db.Integer
+  normalisasi Normalisasi[]
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Normalisasi {
+  id          Int      @id @default(autoincrement())
+  pembagi     Int      @db.Integer
+  n1          Decimal  @db.Decimal
+  n2          Decimal  @db.Decimal
+  n3          Decimal  @db.Decimal
+  n4          Decimal  @db.Decimal
+  kriteria    Kriteria @relation(fields: [kriteriaId], references: [id])
+  kriteriaId  Int
+  hasil       Hasil    @relation(fields: [hasilId], references: [id])
+  hasilId     Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Hasil {
+  id          Int      @id @default(autoincrement())
+  terbaik     Decimal  @db.Decimal
+  hasil1      Decimal  @db.Decimal
+  hasil2      Decimal  @db.Decimal
+  hasil3      Decimal  @db.Decimal
+  hasil4      Decimal  @db.Decimal
+  normalisasi Normalisasi[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

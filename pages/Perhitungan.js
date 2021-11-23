@@ -19,6 +19,7 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
 import Select from '@material-ui/core/Select';
+import Button from '@material-ui/core/Button';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ListItem from '@material-ui/core/ListItem';
@@ -158,7 +159,7 @@ function Cell(props) {
   };
 
   return (
-    <Grid item xs={2}>
+    <Grid item xs={3}>
       <Paper className={props.fixedHeightPaper}>
         <Typography variant="h6" style={{
           marginBottom: 10,
@@ -317,30 +318,33 @@ export default function Perhitungan() {
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
+        <Container maxWidth="xl" className={classes.container}>
           <Grid container spacing={3}>
             <Cell judul="C1" selectEmpty={classes.selectEmpty} fixedHeightPaper={fixedHeightPaper} />
             <Cell judul="C2" selectEmpty={classes.selectEmpty} fixedHeightPaper={fixedHeightPaper} />
             <Cell judul="C3" selectEmpty={classes.selectEmpty} fixedHeightPaper={fixedHeightPaper} />
             <Cell judul="C4" selectEmpty={classes.selectEmpty} fixedHeightPaper={fixedHeightPaper} />
-            <Cell judul="C5" selectEmpty={classes.selectEmpty} fixedHeightPaper={fixedHeightPaper} />
-            <Cell judul="C6" selectEmpty={classes.selectEmpty} fixedHeightPaper={fixedHeightPaper} />
           </Grid>
-          <TextField type="number" style={{
-            marginTop: 60
-          }} id="filled-basic" value={95.2719} variant="outlined" />
-          <TextField type="number" style={{
-            marginTop: 60, marginLeft: 20,
-          }} id="filled-basic" value={90.5139} variant="outlined" />
-          <TextField type="number" style={{
-            marginTop: 60, marginLeft: 20,
-          }} id="filled-basic" value={87.3684} variant="outlined" />
-          <TextField type="number" style={{
-            marginTop: 60, marginLeft: 20,
-          }} id="filled-basic" value={91.2701} variant="outlined" />
-          <TextField type="number" style={{
-            marginTop: 60, marginLeft: 115,
-          }} id="filled-basic" value={95.2719} label="Alt. Terbaik" variant="outlined" />
+          <Button fullWidth={true} style={{marginTop: 30}} variant="contained" color="primary">
+            Hitung Hasil
+          </Button>
+          <Box style={{marginTop: 30}} display="flex" justifyContent="center">
+            <TextField type="number" style={{
+              marginRight: 10
+            }} id="filled-basic" disabled value={95.2719} variant="filled" />
+            <TextField type="number" style={{
+              marginRight: 10
+            }} id="filled-basic" disabled value={90.5139} variant="filled" />
+            <TextField type="number" style={{
+              marginRight: 10
+            }} id="filled-basic" disabled value={87.3684} variant="filled" />
+            <TextField type="number" style={{
+              marginRight: 10
+            }} id="filled-basic" disabled value={91.2701} variant="filled" />
+            <TextField type="number" style={{
+              marginRight: 10
+            }} id="filled-basic" disabled value={95.2719} label="Alt. Terbaik" variant="filled" />
+          </Box>
           <Box pt={4}>
             <Copyright />
           </Box>
