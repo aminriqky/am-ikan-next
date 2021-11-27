@@ -125,38 +125,53 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const initialState = {
+  select: '', display: '', kepentingan: null, pembagi: 0,
+  c1: null, c2: null, c3: null, c4: null, hasil: 0,
+  normal1: 0, normal2: 0, normal3: 0, normal4: 0
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'updateFieldValue':
+      return { ...state, [action.field]: action.value };
+    case 'Cost':
+      const bagiCost = { pembagi: Math.min(state.c1, state.c2, state.c3, state.c4) }
+      return {
+        ...state,
+        select: '', pembagi: bagiCost.pembagi, display: 'Cost',
+        normal1: bagiCost.pembagi / state.c1, normal2: bagiCost.pembagi / state.c2, 
+        normal3: bagiCost.pembagi / state.c3, normal4: bagiCost.pembagi / state.c4
+      }
+    case 'Benefit':
+      const bagiBenefit = { pembagi: Math.max(state.c1, state.c2, state.c3, state.c4) }
+      return {
+        ...state,
+        select: '', pembagi: bagiBenefit.pembagi, display: 'Benefit',
+        normal1: state.c1 / bagiBenefit.pembagi, normal2: state.c2 / bagiBenefit.pembagi,
+        normal3: state.c3 / bagiBenefit.pembagi, normal4: state.c4 / bagiBenefit.pembagi
+      }
+    default:
+      throw new Error();
+  }
+}
+
 function Cell(props) {
-  const [select, setSelect] = React.useState('');
-  const [c1, setC1] = React.useState('');
-  const [c2, setC2] = React.useState('');
-  const [c3, setC3] = React.useState('');
-  const [c4, setC4] = React.useState('');
-  const [pembagi, setPembagi] = React.useState('');
-  const [normal1, setNormal1] = React.useState('');
-  const [normal2, setNormal2] = React.useState('');
-  const [normal3, setNormal3] = React.useState('');
-  const [normal4, setNormal4] = React.useState('');
+  const [state, dispatch] = React.useReducer(reducer, initialState);
 
   React.useEffect(() => {
-    if (select === 'Cost') {
-      setPembagi(Math.min(c1, c2, c3, c4));
-      setNormal1(pembagi / c1);
-      setNormal2(pembagi / c2);
-      setNormal3(pembagi / c3);
-      setNormal4(pembagi / c4);
-    }
-    if (select === 'Benefit') {
-      setPembagi(Math.max(c1, c2, c3, c4));
-      setNormal1(c1 / pembagi);
-      setNormal2(c2 / pembagi);
-      setNormal3(c3 / pembagi);
-      setNormal4(c4 / pembagi);
+    if (state.select === 'Cost') {
+      dispatch({type: 'Cost'})
+    } else if (state.select === 'Benefit') {
+      dispatch({type: 'Benefit'})
+    } else {
+      state.select = ''
     }
   })
 
-  const handleChange = (event) => {
-    setSelect(event.target.value);
-  };
+  const onChange = (field) => (event) => {
+    dispatch({ type: "updateFieldValue", field, value: event.target.value });
+  }
 
   return (
     <Grid item xs={3}>
@@ -170,7 +185,8 @@ function Cell(props) {
           marginBottom: 10,
           marginTop: 10
         }}>Cost/Benefit</Typography>
-        <Select value={select} onChange={handleChange} displayEmpty className={props.selectEmpty} variant="outlined" inputProps={{
+        <Select onChange={onChange('select')} value={state.display} displayEmpty 
+        className={props.selectEmpty} variant="outlined" inputProps={{
           'aria-label': 'Without label'
         }}>
           <MenuItem value="">
@@ -182,62 +198,56 @@ function Cell(props) {
         <TextField type="number" style={{
           marginBottom: 10,
           marginTop: 10
-        }} id="filled-basic" label="Kepentingan" variant="filled" />
+        }} id="filled-basic" onChange={onChange('kepentingan')} value={state.kepentingan} 
+        label="Kepentingan" variant="filled" />
         <Typography variant="subtitle2" style={{
           marginBottom: 10,
           marginTop: 10
         }}>Bobot</Typography>
         <TextField type="number" style={{
           marginBottom: 10
-        }} id="filled-basic" value={c1} onChange={event => {
-          setC1(event.target.value);
-        }} label="A1" variant="filled" />
+        }} id="filled-basic" onChange={onChange('c1')} value={state.c1} 
+        label="A1" variant="filled" />
         <TextField type="number" style={{
           marginBottom: 10
-        }} id="filled-basic" value={c2} onChange={event => {
-          setC2(event.target.value);
-        }} label="A2" variant="filled" />
+        }} id="filled-basic" onChange={onChange('c2')} value={state.c2} 
+        label="A2" variant="filled" />
         <TextField type="number" style={{
           marginBottom: 10
-        }} id="filled-basic" value={c3} onChange={event => {
-          setC3(event.target.value);
-        }} label="A3" variant="filled" />
+        }} id="filled-basic" onChange={onChange('c3')} value={state.c3} 
+        label="A3" variant="filled" />
         <TextField type="number" style={{
           marginBottom: 10
-        }} id="filled-basic" value={c4} onChange={event => {
-          setC4(event.target.value);
-        }} label="A4" variant="filled" />
+        }} id="filled-basic" onChange={onChange('c4')} value={state.c4} 
+        label="A4" variant="filled" />
         <Typography variant="subtitle2" style={{
           marginBottom: 10,
           marginTop: 10
         }}>Pembagi</Typography>
         <TextField type="number" style={{
           marginBottom: 10
-        }} value={pembagi} id="filled-basic" disabled variant="outlined" />
+        }} onChange={onChange('pembagi')} value={state.pembagi} 
+        id="filled-basic" disabled variant="outlined" />
         <Typography variant="subtitle2" style={{
           marginBottom: 10,
           marginTop: 10
         }}>Normalisasi</Typography>
         <TextField type="number" style={{
           marginBottom: 10
-        }} value={normal1} onChange={event => {
-          setNormal1(event.target.value);
-        }} id="filled-basic" disabled variant="outlined" />
+        }} onChange={onChange('normal1')} value={state.normal1} 
+        id="filled-basic" disabled variant="outlined" />
         <TextField type="number" style={{
           marginBottom: 10
-        }} value={normal2} onChange={event => {
-          setNormal2(event.target.value);
-        }} id="filled-basic" disabled variant="outlined" />
+        }} onChange={onChange('normal2')} value={state.normal2} 
+        id="filled-basic" disabled variant="outlined" />
         <TextField type="number" style={{
           marginBottom: 10
-        }} value={normal3} onChange={event => {
-          setNormal3(event.target.value);
-        }} id="filled-basic" disabled variant="outlined" />
+        }} onChange={onChange('normal3')} value={state.normal3} 
+        id="filled-basic" disabled variant="outlined" />
         <TextField type="number" style={{
           marginBottom: 10
-        }} value={normal4} onChange={event => {
-          setNormal4(event.target.value);
-        }} id="filled-basic" disabled variant="outlined" />
+        }} onChange={onChange('normal4')} value={state.normal4} 
+        id="filled-basic" disabled variant="outlined" />
       </Paper>
     </Grid>
   );
@@ -248,6 +258,7 @@ export default function Perhitungan() {
   const router = useRouter();
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   const [open, setOpen] = React.useState(true);
+  const [state, dispatch] = React.useReducer(reducer, initialState);
 
   const handleDrawerOpen = () => {
     setOpen(true);
